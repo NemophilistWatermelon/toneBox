@@ -31,7 +31,7 @@ config.js
     func: module1_create_func,
   }
   
-  module.exports [
+  module.exports = [
     module1
   ]
 ```
@@ -48,7 +48,7 @@ config.js
     func: module1_create_func
   }
   
-  module.exports [
+  module.exports = [
     module1
   ]
 ```
