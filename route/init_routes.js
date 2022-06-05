@@ -21,6 +21,7 @@ var regis_router = (router, routes) => {
         __regis_route(router, route)
     }
 }
+console.log(require(`${baseFilePath}/UploadController`),)
 const Routes = [
     // 留言
     require(`${baseFilePath}/pushWordsController`),
@@ -32,7 +33,8 @@ const Routes = [
     require(`${baseFilePath}/proController`),
     // 静态页面资源
     require(`${baseFilePath}/staticPageController`),
-
+    // upload 上传文件模块
+    require(`${baseFilePath}/UploadController`),
 ]
 
 const __main = (router, routes) => {
