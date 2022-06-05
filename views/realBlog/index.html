@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>编辑博客·for·Kevin</title>
+    <style>
+        /* edit title */
+
+        .edit {
+            width: 100%;
+        }
+
+        .edit .edit-title {
+            padding: 20px;
+        }
+
+        /* pannel  */
+
+        .edit-panel {
+            margin: 15px 15px;
+            padding: 15px 15px;
+            overflow: hidden;
+        }
+
+        .edit-panel.edit-default {
+            box-shadow: 0 0 3px 0 #ccc;
+        }
+
+        .edit-panel input,
+        .edit-panel textarea {
+            margin: 0 15px;
+        }
+
+        .blog-cat {
+            float: left;
+        }
+
+        /* ui  btn*/
+
+        .ui-btn {
+            border: 3px;
+            padding: 10px;
+            transition: all .3s;
+            letter-spacing: 0.2rem;
+            background-color: black;
+            box-shadow: 0 0 1px 1px #ccc;
+            color: #fff;
+            text-shadow: 0 1px 0 #ccc;
+            font-family: Arial, Helvetica, sans-serif;
+            border: 1px solid transparent;
+            outline: none;
+            transition: all .3s;
+        }
+
+        .ui-btn:active {
+            border: 1px solid black;
+            background-color: #353533;
+        }
+
+        .ui-btn.ui-btn-block {
+            display: block;
+            width: 100%;
+        }
+
+        /* ui input */
+
+        .ui-input {
+            border: 2px solid #ccc;
+            text-indent: 4px;
+            height: 20px;
+            outline: none;
+            transition: all .3s;
+        }
+
+        .ui-input,
+        .edit .edit-title {
+            text-shadow: 0 1px 0 #ccc;
+        }
+
+        .ui-input.ui-input-default {
+            font-size: 1.35rem;
+            font-family: monospace;
+            font-weight: bold;
+        }
+
+        .ui-input:focus {
+            border: 2px solid #353535;
+        }
+
+        .ui-input:active {
+            background: #ccc;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="edit">
+        <div class="edit-panel edit-default">
+            <div class="blog-cat">
+                <section class="edit-title"> 文章标题：</section>
+                <input class='ui-input ui-input-default ajax_clear' type="text" id='blog_title'>
+            </div>
+            <div class="blog-cat">
+                <section class="edit-title"> 作者：</section>
+                <input class='ui-input ui-input-default ajax_clear' type="text" id='blog_autor'>
+            </div>
+            <div class="blog-cat">
+                <section class="edit-title"> 分类：</section>
+                <input class='ui-input ui-input-default ajax_clear' type="text" id='blog_catgory'>
+            </div>
+        </div>
+        <div class="edit-panel edit-default">
+            <section class="edit-title"> 文章编辑区域：</section>
+            <div id="editor" class='ajax_clear'>
+            </div>
+        </div>
+        <div class="edit-panel edit-default">
+            <section class="edit-title">预览源码：</section>
+            <textarea id="text" class="ajax_clear" style="width:100%; height:200px;" disabled></textarea>
+        </div>
+
+    </div>
+    <div class="edit-pannel ">
+        <button id='commit_content' class="ui-btn ui-btn-block">提交文章</button>
+    </div>
+
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="//unpkg.com/wangeditor/release/wangEditor.min.js"></script>
+
+    <script>
+        const log = function() {
+            console.log.apply(console, arguments)
+        }
+        const initEditor = function() {
+            var E = window.wangEditor;
+            var editor = new E('#editor');
+            return editor;
+        }
+        const isReviewCode = function(editor) {
+            var $text = $('#text')
+            editor.customConfig.onchange = function(html) {
+                // 监控变化，同步更新到 textarea
+                $text.val(html)
+            }
+            editor.create()
+            // 初始化 textarea 的值
+            $text.val(editor.txt.html())
+            return $text;
+        }
+        const isbaseSaveImg = function(editor) {
+            editor.customConfig.uploadImgShowBase64 = true // 使用 base64 保存图片
+            return;
+        }
+        const ajax = function(config) {
+            var form = infoArticle();
+            var success = config.success || function() {};
+            var error = config.error || function() {};
+            var sendContent = $.ajax({
+                method: config.method || null,
+                url: config.url || null,
+                data: form,
+                async: config.async || null,
+                dataType: config.dataType || null,
+                success: success || null,
+                error: error || null,
+            })
+            log('sendContent:', sendContent)
+            return sendContent;
+        }
+        const infoArticle = function() {
+            var form = {}
+            // 需要 传递的数据
+            form.title = $('#blog_title').val()
+            form.author = $('#blog_autor').val()
+            form.catgory = $('#blog_catgory').val()
+            form.date = new Date().getTime()
+            form.blogContent = $('#text').val()
+            return form;
+        }
+        const claerContent = function() {
+            setTimeout(function() {
+                alert('发布成功')
+                $('form').reset();
+            }, 1000)
+
+        }
+        const bindEventsOfBtn = function(config) {
+            var strWords = `您编辑好了吗(●'◡'●)？`;
+            $('#commit_content').click(function() {
+                if (confirm(strWords)) {
+                    // ajax send data
+                    var response = ajax(config);
+                    response.status == 200 ? claerContent() : log('失败')
+                } else {
+                    log('取消了发表操作')
+                }
+            })
+        }
+
+        const __main = function() {
+            var config = {
+                async: false,
+                method: 'post',
+                url: '/api/blogCommit',
+                dataType: 'html',
+                contentType: "application/json"
+            }
+            var editor = initEditor()
+            isbaseSaveImg(editor);
+            isReviewCode(editor);
+            bindEventsOfBtn(config);
+        }
+        __main()
+    </script>
+
+</body>
+
+</html>

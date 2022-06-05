@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kevin_Login</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <style>
+        p.showTip {
+            animation: txtTipOpacity 1s forwards;
+        }
+
+        @keyframes txtTipOpacity {
+            0% {
+                opacity: 0;
+            }
+
+            100% {
+                color: white;
+                background-color: rgb(189, 90, 110);
+                opacity: 1;
+            }
+        }
+
+        .txtCenter {
+            text-align: center;
+        }
+
+        .txtLeft {
+            text-align: left;
+        }
+
+        body {
+            padding: 0 50px;
+        }
+
+        .login-box {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 400px;
+            height: 400px;
+            margin-top: -200px;
+            margin-left: -200px;
+        }
+
+        .login-box .panel-body {
+            padding: 10px 10%;
+        }
+
+        .login-box>.container {
+            display: inline-block;
+            max-width: 600px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-box txtCenter">
+        <div class="panel panel-primary">
+            <section class="panel-heading">
+                <h2>Kevin·Home</h2>
+            </section>
+
+            <section class="panel-body">
+                <p class="hide txt-danger"></p>
+                <div class="form-group txtLeft">
+                    <label for="">帐名：</label>
+                    <input type="text" class="form-control login-name" autofocus>
+                </div>
+                <div class="form-group txtLeft">
+                    <label for="">密码：</label>
+                    <input type="password" class="form-control pasw">
+
+                </div>
+                <div class="form-group txtLeft">
+                    <button type="submit" data-set="<%= token%>" class="login btn btn-primary btn-block">
+                        登录
+                    </button>
+                </div>
+            </section>
+
+        </div>
+    </div>
+    <script>
+        //  util.js
+        const log = console.log.bind(console)
+
+        const e = function (sel) {
+            return document.querySelector(sel)
+        }
+
+        const bindEvent = function (ele, eventName, eventFunc, eventModel = false) {
+            ele.addEventListener(eventName, eventFunc, eventModel)
+            return ele
+        }
+
+        const ajax = function () {
+            var myAjax = {
+                success: arguments[0].success || function () { },
+                error: arguments[0].error || function () { },
+            }
+            var x = new XMLHttpRequest();
+            x.open(arguments[0].method, arguments[0].url);
+            x.setRequestHeader("Content-type", "application/json;charset=utf8");
+            x.send(arguments[0].data);
+            x.onreadystatechange = function () {
+                if (x.readyState == 4) {
+                    // 回调 success 函数
+                    var jsonData = JSON.parse(x.response)
+                    myAjax.success(jsonData);
+                } else {
+                    // 回调 error 函数
+                    myAjax.error();
+                }
+            }
+            return x;
+        }
+    </script>
+
+    <script>
+        // Error Tips
+        const showErrorTip = async function (text) {
+            var tip = e('.txt-danger'),
+                timeOut = null;
+            tip.classList.remove('hide');
+            tip.innerText = text || "账号或者密码未输入完整~"
+            tip.classList.add('showTip');
+            timeOut = await setTimeout(function () {
+                tip.classList.remove('showTip');
+                tip.classList.add('hide')
+                tip.innerText = ""
+            }, 3000)
+
+            return;
+        }
+    </script>
+    <script>
+        const formData = function () {
+            var usrVal = e('.login-name').value;
+            var pasVal = e('.pasw').value;
+            var safeNum = e('.login').dataset.set;
+            if (usrVal == "" || pasVal == "") {
+                showErrorTip()
+                return
+            } else {
+                return {
+                    username: usrVal,
+                    password: pasVal,
+                    safeNum,
+                }
+            }
+        }
+       
+
+        var ajaxStatus = null,
+            bool = null;
+
+        const sendData = function (config) {
+            if (bool) {
+                ajaxStatus.abort();
+                showErrorTip('操作频繁，请刷新再试')
+                bool = true;
+            } else {
+                ajaxStatus = ajax({
+                    method: config.method,
+                    data: JSON.stringify(config.data),
+                    url: config.path,
+                    success(data) {
+                        log(data)
+                        if (data.code == '0') {
+                            var t = data.token,
+                                p = data.path;
+                            window.location.href = p + '/?t=' + t;
+                        } else {
+                            alert('登录失败')
+                        }
+                    }
+                })
+                bool = true;
+                return config;
+            }
+        }
+        const clickFuncForBtn = function (e) {
+            var data = formData()
+            var config = {
+                path: '/api/usr/login',
+                method: 'post',
+                data,
+            }
+
+            data && sendData(config)
+        }
+        const bindBtnEvent = function () {
+            var loginBtn = e('.login')
+            bindEvent(loginBtn, 'click', clickFuncForBtn, false)
+        }
+        const __loginMain = function () {
+            bindBtnEvent()
+        }
+        __loginMain()
+    </script>
+</body>
+
+</html>

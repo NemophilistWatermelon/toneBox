@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        h1 {
+            text-align: center;
+        }
+
+        .container {
+            width: 1000px;
+            margin: 0 auto;
+        }
+
+        canvas {
+            border-top: 3px red solid !important;
+            border-left: 3px green solid !important;
+
+        }
+
+        canvas,
+        .arc-editor {
+            float: left;
+            margin: 0 auto;
+            border: 2px dotted;
+        }
+
+        .arc-editor {
+            /* float: left; */
+            height: 600px;
+            border: 3px dashed;
+            text-align: center;
+        }
+
+        .arc-editor input {
+            padding: 5px;
+            margin: 5px 0;
+            color: red
+        }
+
+        .arc-editor input::placeholder {
+            color: green;
+        }
+
+        .arc-editor input:focus {
+            outline: red dashed;
+        }
+    </style>
+    <style>
+        .btn {
+            padding: 5px 10px
+        }
+
+        .btn:hover {
+            cursor: pointer
+        }
+
+        .btn:focus {
+            outline: red dashed;
+        }
+
+        .btn.btn-primary {
+            box-shadow: inset 0px 0px 1px 0px red;
+            border: none
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 舞台 -->
+    <div class="container">
+        <h1>JavaScript Canvas Draw Board</h1>
+        <canvas id="canvas" width="600" height="600"></canvas>
+        <section class='arc-editor'>
+            <h5>画圆编辑</h5>
+            <div>
+                <input data-input="true" placeholder="x坐标">
+            </div>
+            <div>
+                <input data-input="true" placeholder="y坐标">
+            </div>
+            <div>
+                <input data-input="true" placeholder="半径 radius">
+            </div>
+            <div>
+                <input data-input="true" placeholder="起始角度 default:0">
+            </div>
+            <div>
+                <input data-input="true" placeholder="结束角度 default 2 PI">
+            </div>
+            <button class="btn btn-primary" id='btn' data-action='click'>run</button>
+            <button class="btn btn-primary" data-action='click' id="clearBoard">clear</button>
+            <p>注意：Y轴绿线, X轴红线
+                在左上角</p>
+        </section>
+        <seciotn>
+            <ul>
+                <li>更新: arc 画圆 板块</li>
+            </ul>
+        </seciotn>
+    </div>
+    <!-- TODO: Painter JS base of canvas_api -->-->
+    <script src="/js/draw/painter.js"></script>
+    <script>
+        // dom api
+        const e = sel => document.querySelector(sel)
+        const es = sel => document.querySelectorAll(sel)
+    </script>
+
+    <script>
+        const ParamsByclick = function(e) {
+            // 读取编辑面板信息
+            var inputsGroup = es(".arc-editor div input")
+            var params = []
+            // h5 是 0
+            for (let index = 0; index < inputsGroup.length; index++) {
+                let element = inputsGroup[index]
+                if (element.dataset.input) {
+                    params.push(element.value)
+                }
+
+            }
+            return params;
+            //  靶心代码
+            // for (var i = 0; i < 5; i++) {
+            // 	for (var j = 0; j < 5; j++) {
+            // 		pen.arc({
+            // 			x: 50,
+            // 			y: 50,
+            // 			startAngle: 0,
+            // 			endAngle: Math.PI * 2,
+            // 			radius: j * i * 2,
+            // 			dir: false
+            // 		})
+            // 	}
+            // }
+        }
+        const drawRunner = function() {
+            var pen = Painter.init()
+            // 获取参数
+            var params = ParamsByclick();
+            pen.arc({
+                x: params[0],
+                y: params[1],
+                radius: params[2],
+                startAngle: params[3],
+                endAngle: Math.PI * 2 || Math.PI * params[4],
+                dir: false
+            })
+            return params;
+        }
+        const clearBoardHandler = function(eve) {
+            var c = e('#canvas')
+            var ctx = c.getContext("2d")
+            ctx.clearRect(0, 0, c.width, c.height)
+        }
+        const bindEventsOfBtns = function() {
+            var btnRunner = e('#btn')
+            var clearBoardBtn = e("#clearBoard")
+            var actions = btn.dataset.action; // click
+            // 绑定事件
+            btnRunner.addEventListener(actions, drawRunner)
+            clearBoardBtn.addEventListener(actions, clearBoardHandler)
+        }
+
+        const _main = function() {
+            bindEventsOfBtns()
+            // 绘制矩形
+            // pen.drawRect({
+            //         x: 20,
+            //         y: 20,
+            //         w: 140,
+            //         h: 140,
+            //         color: 'green',
+            //     })
+            // 绘制文字
+            // pen.drawText({
+            // text: "矩形",
+            // text_XPosition: 10,
+            // text_YPosition: 240,
+            // color: "#ff0000"
+            // })
+            // pen.LineTo()
+        }
+        _main()
+    </script>
+</body>
+
+</html>

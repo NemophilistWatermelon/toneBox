@@ -1,0 +1,267 @@
+<!-- trans html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>翻·译·机</title>
+    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css"
+          integrity="sha384-cg6SkqEOCV1NbJoCu11+bm0NvBRc8IYLRGXkmNrqUBfTjmMYwNKPWBTIKyw9mHNJ" crossorigin="anonymous">
+    <style>
+        /* * {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+         */
+
+        .user_selectn_none {
+            user-select: none;
+        }
+
+        .pure-head {
+            background-color: #353535;
+            padding: 15px;
+        }
+
+        .pure_title_shadow {
+            color: #fff;
+            font-size: 2em;
+            text-shadow: 1px 5px 11px rgba(255, 255, 255, 0.84);
+        }
+
+        html,
+        body,
+        .pure-g {
+            height: 100%;
+        }
+
+        .pure_menu_back {
+            background-color: rgba(0, 0, 0, 0.84);
+        }
+
+        .p_t_b_10 {
+            padding: 10px 0;
+        }
+
+        .pure-form textarea {
+            width: 100%;
+            font-size: 14px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .pure-trans-wrap {
+            width: 100%;
+        }
+
+        .flex_box {
+            display: flex;
+        }
+
+        .cls-result-control > * {
+            padding: 8px 6px;
+        }
+
+        .errtip {
+            opacity: 0;
+        }
+
+        .errtip_show {
+            opacity: 1;
+            animation: _tipShow 1s linear forwards;
+        }
+
+        @keyframes _tipShow {
+            from {
+                opacity: 0;
+            }
+            to {
+                color: crimson;
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="pure-head pure-u-1 user_selectn_none">
+    <div class="pure-u-1 pure-u-md-1-2">
+        <span class="pure_title_shadow">Translate Machine</span>
+    </div>
+</div>
+<div class="pure-g">
+    <!-- l -->
+    <div class=" pure-u-1-5 pure_menu_back pure-menu custom-restricted-width user_selectn_none">
+        <span class="pure-menu-heading">Menu</span>
+        <ul class="pure-menu-list">
+            <li class="pure-menu-item p_t_b_10">
+                <a href="#" class=" pure-menu-link">阅·读·短·文</a>
+            </li>
+            <li class="pure-menu-item p_t_b_10">
+                <a href="#" class="pure-menu-link">翻·译·单·词</a>
+            </li>
+            <li class="pure-menu-item p_t_b_10">
+                <a href="#" class="pure-menu-link">评价</a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- r -->
+
+    <div class="pure-u-4-5">
+        <div class="flex_box">
+            <div class="pure-u-1">
+                <div class="pure-container  pure-form">
+                    <label for="">原文</label>
+                    <textarea name="" id="id-prev-txt" cols="30" rows="10"></textarea>
+                </div>
+            </div>
+
+            <div class="pure-u-1">
+                <div class="pure-container pure-form">
+                    <label for="">译文</label>
+                    <textarea name="" id="id-next-txt" cols="30" rows="10"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="cls-result-control">
+            <div class="result-c-list">
+                <span>选择翻译模式:</span>
+                <select name="" id="id-select-lang">
+                    <option data-option-lang='zn-en' value="">汉译英</option>
+                    <option data-option-lang='en-zn' value="">英译汉</option>
+                </select>
+            </div>
+
+            <div class="result-c-submit">
+                <button class="pure-button pure-button-primary">翻译</button>
+                <span class='errtip'>不好意思，原文不能为空</span>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+</body>
+<script src="https://cdn.bootcdn.net/ajax/libs/axios/0.19.2/axios.js"></script>
+<script>
+    // utils
+    const log = console.log.bind(console)
+    const dir = console.dir.bind(console)
+    const bindEvent = function (ele, event, event_func, isCapture = false) {
+        return ele.addEventListener(event, event_func, isCapture)
+    }
+    const e = function (sel) {
+        return document.querySelector(sel)
+    }
+</script>
+<script>
+    // api
+    const TransApi = function () {
+
+        this.axios = axios
+    }
+    TransApi.prototype.request = function (option) {
+        if (String(option) !== "[object Object]") {
+            console.err('值类型错误')
+        }
+        return this.axios(option)
+    }
+    TransApi.prototype.post_content = function (data) {
+
+        var path = '/api/trans'
+        var o = this.request({
+            method: 'post',
+            url: path,
+            data,
+        })
+        return o
+    }
+    TransApi.new = function () {
+        return new this;
+    }
+</script>
+
+<script>
+    // main
+    const small_tip = function () {
+        const val_null = function () {
+            var activeClass = 'errtip_show'
+            var span_tip = e('.errtip')
+            span_tip.classList.add(activeClass)
+            bindEvent(span_tip, 'animationend', function () {
+                log('this', this)
+                this.classList.remove(activeClass)
+            }, false)
+        }
+
+        return {
+            val_null
+        }
+    }
+    const event_list = function () {
+        var {
+            val_null
+        } = small_tip()
+
+        const result_click_event = function (event) {
+            // log('clicked !')
+            var target = event.target
+
+            if (target.classList.contains('pure-button')) {
+
+                var select = e('#id-select-lang')
+                var mode_num = select['selectedIndex']
+                // 切割获取语言状态
+                var mode = select.options[mode_num].dataset.optionLang.split('-')
+                // 拿到语言模式
+                var [prev_mode, next_mode] = mode;
+                // 拿到翻译原文
+                var prev_text = e('#id-prev-txt').value
+                if (prev_text == '') {
+                    return val_null()
+                }
+                // 组装数据
+                var ajax_trans_option = {
+                    prev_mode,
+                    next_mode,
+                    prev_text,
+                }
+                var api = TransApi.new()
+
+                var result = api.post_content({
+                    ori_lang: ajax_trans_option.prev_mode,
+                    tar_lang: ajax_trans_option.next_mode,
+                    ori_ct: ajax_trans_option.prev_text
+                })
+
+                result.then(data => {
+                    log(data)
+                })
+            }
+        }
+
+
+        return {
+            result_click_event,
+        }
+    }
+    // result-control
+    const bindEvents = function () {
+        // Event List Func
+        var {
+            result_click_event
+        } = event_list()
+        // 翻译按钮绑定事件
+        var result_wrap = e('.cls-result-control')
+        bindEvent(result_wrap, 'click', result_click_event, false)
+
+    }
+    const __main = function () {
+        bindEvents()
+    }
+    __main()
+</script>
+
+</html>
