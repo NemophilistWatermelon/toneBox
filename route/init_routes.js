@@ -8,8 +8,9 @@ const baseFilePath = '../controller'
 var __regis_route = function (router, route) {
     if (route.another_func != undefined) {
         return router[route.method](defalutPath + route.path, route.another_func, route.func)
+    } else if(route.noPrefix) {
+        return router[route.method](route.path, route.func)
     } else {
-
         return router[route.method](defalutPath + route.path, route.func)
     }
 }
@@ -21,7 +22,6 @@ var regis_router = (router, routes) => {
         __regis_route(router, route)
     }
 }
-console.log(require(`${baseFilePath}/UploadController`),)
 const Routes = [
     // 留言
     require(`${baseFilePath}/pushWordsController`),
@@ -35,6 +35,9 @@ const Routes = [
     require(`${baseFilePath}/staticPageController`),
     // upload 上传文件模块
     require(`${baseFilePath}/UploadController`),
+    // 切片上传练习
+    require(`${baseFilePath}/ChunkFileController`),
+
 ]
 
 const __main = (router, routes) => {

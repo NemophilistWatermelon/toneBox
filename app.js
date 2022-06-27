@@ -11,10 +11,14 @@ const cors = require('cors');
 const router = require('./route/init_routes.js');
 const path = require('path');
 const session = require('express-session')
+const expressFileUpload = require('express-fileupload');
 // const http = require("http").createServer(app);
 // const io = require("socket.io")(http);
 // import socket set service
 const regisSockets = require('./socketController/index')
+const { createProxyMiddleware } = require('http-proxy-middleware')
+const ProxyController = require('./controller/ProxyController')
+app.use(expressFileUpload())
 app.use(session({
   secret: 'keyboard cat',
   resave: false,
@@ -27,7 +31,7 @@ app.use(express.static("uploads"))
 //开放静态资源目录
 app.use(express.static("public"))
 app.use(express.static("views"))
-
+// ProxyController(app)
 
 app.engine('html', require('express-art-template'));
 // app.engine('pug', require('express-art-template'));
