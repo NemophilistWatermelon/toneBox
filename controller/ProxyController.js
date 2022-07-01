@@ -1,4 +1,7 @@
-const {createProxyMiddleware} = require('http-proxy-middleware')
+/**
+ * @desc: 处理跨域模块，这个模块如果开着那么其他模块的请求将收不到， 一般用于前端项目配置跨域处理
+ */
+const { createProxyMiddleware } = require('http-proxy-middleware')
 const proxyMap = require('../config/Proxy/main')
 
 module.exports = function (app) {

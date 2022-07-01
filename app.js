@@ -48,7 +48,7 @@ app.use(bodyParser.json());
 // 端口配置
 
 // 配置端口号
-const port = 3000;
+const port = require('./config/Port').port;
 
 app.use(cors());
 

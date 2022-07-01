@@ -1,10 +1,10 @@
 const express = require('express');
 
 const router = express.Router();
+const ROUTES_REGIS = require('./routes_regis')
 const log = console.log.bind(console)
 var defalutPath = '/api'
 
-const baseFilePath = '../controller'
 var __regis_route = function (router, route) {
     if (route.another_func != undefined) {
         return router[route.method](defalutPath + route.path, route.another_func, route.func)
@@ -22,23 +22,7 @@ var regis_router = (router, routes) => {
         __regis_route(router, route)
     }
 }
-const Routes = [
-    // 留言
-    require(`${baseFilePath}/pushWordsController`),
-    // user
-    require(`${baseFilePath}/UserLoginController`),
-    // 新闻
-    require(`${baseFilePath}/newsController`),
-    // 产品
-    require(`${baseFilePath}/proController`),
-    // 静态页面资源
-    require(`${baseFilePath}/staticPageController`),
-    // upload 上传文件模块
-    require(`${baseFilePath}/UploadController`),
-    // 切片上传练习
-    require(`${baseFilePath}/ChunkFileController`),
-
-]
+const Routes = ROUTES_REGIS
 
 const __main = (router, routes) => {
     var length = routes.length;
