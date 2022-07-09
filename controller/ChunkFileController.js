@@ -15,7 +15,8 @@ const {
 const Port = require('../config/Port').port
 
 const onUpload = (req, res) => {
-    const fileName = req.body.fileName + extname(req.body.fileName)
+    const ext = extname(req.body.fileName)
+    const fileName = req.body.fileName.split(extname(req.body.fileName))[0] + extname(req.body.fileName)
     const curChunkSize = req.body.curChunkSize
     const fileSize = req.body.size
     const writeFilePath = resolve(__dirname, '../uploads/uploads', fileName)
@@ -28,23 +29,12 @@ const onUpload = (req, res) => {
             })
             return
         }
-        console.log(fileSize, curChunkSize)
-
-
         appendFileSync(writeFilePath, req.files.file.data)
-        if (Number(curChunkSize) > Number(fileSize)) {
-            console.log('进来了')
-            res.send({
-                msg: 'ok',
-                url: `http://localhost:${Port}/uploads/` + fileName,
-                status: 'ended'
-            })
-        } else {
-            res.send({
-                msg: 'ok',
-                status: 'appended',
-            })
-        }
+        res.send({
+            msg: 'ok',
+            url: `http://localhost:${Port}/uploads/` + fileName,
+            status: 'appended'
+        })
         return
     }
 

@@ -10,9 +10,6 @@ const CreateRoutes = function () {
     const fs = require('fs')
     const result = fs.readdirSync('./controller')
     this.result = {}
-
-    this.create = function (result) { 
-    }
     this.init = function () { 
         result.forEach(element => {
             const splitPath = element.split('.js')[0]
