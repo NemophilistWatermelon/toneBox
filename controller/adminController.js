@@ -95,11 +95,15 @@ const postUsrLoginData = async function(req, res) {
     }
 }
 
+// // render 登录页面获取
+// const getPage = (req, res) => {
+//     res.render('admin/login.html')
+// }
+
 // render 登录页面获取
 const getPage = (req, res) => {
-    res.render('admin/login.html')
+    sendHtml( './views/admin/ts.html', res)
 }
-
 
 const getAdminIndex = (req, res) => {
     var token = req.query.t
@@ -137,13 +141,23 @@ const getAdminIndex = (req, res) => {
 }
 
 
+// // path
+// const getAdminPage = {
+//     method: "get",
+//     path: '/login',
+//     func: getPage,
+//
+// }
+
+
 // path
 const getAdminPage = {
     method: "get",
-    path: '/login',
+    path: '/tb',
+    noPrefix: true,
     func: getPage,
-
 }
+
 const adminLoginPost = {
     method: "post",
     path: '/usr/login',
@@ -160,6 +174,4 @@ const adminPage = {
 // export routes path
 module.exports = [
     getAdminPage,
-    adminLoginPost,
-    adminPage,
 ]

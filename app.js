@@ -27,10 +27,10 @@ app.use(session({
     secure: true
   },
 }))
-app.use(express.static("uploads"))
 //开放静态资源目录
 app.use(express.static("public"))
 app.use(express.static("views"))
+app.use(express.static("uploads"))
 // ProxyController(app)
 
 app.engine('html', require('express-art-template'));

@@ -1,4 +1,4 @@
 
 // 不需要带js后缀
-const exportsController = ['ChunkFileController']
+const exportsController = ['adminController']
 module.exports = exportsController

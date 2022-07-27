@@ -5,12 +5,14 @@
   "main": "index.js",
   "scripts": {
     "doc": "apidoc -i router/ -o apidoc/ && cross-env NODE_ENV=development nodemon app.js --watch ./",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node app.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@vercel/node": "^2.4.5",
     "apidoc": "^0.51.1",
     "art-template": "^4.13.2",
     "axios": "^0.19.2",
