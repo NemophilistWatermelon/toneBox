@@ -16,8 +16,6 @@ const expressFileUpload = require('express-fileupload');
 // const io = require("socket.io")(http);
 // import socket set service
 const regisSockets = require('./socketController/index')
-const { createProxyMiddleware } = require('http-proxy-middleware')
-const ProxyController = require('./controller/ProxyController')
 app.use(expressFileUpload())
 app.use(session({
   secret: 'keyboard cat',
@@ -31,7 +29,6 @@ app.use(session({
 app.use(express.static("public"))
 app.use(express.static("views"))
 app.use(express.static("uploads"))
-// ProxyController(app)
 
 app.engine('html', require('express-art-template'));
 // app.engine('pug', require('express-art-template'));

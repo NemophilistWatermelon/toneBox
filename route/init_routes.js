@@ -30,7 +30,7 @@ const __main = (router, routes) => {
         const rs = routes[i];
         regis_router(router, rs)
     }
-    console.log(router)
+    // console.log(router)
 }
 __main(router, Routes)
 
